@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+
+/* Add this to your CSS file (e.g., App.css or a dedicated loading.css) */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4.2em; /* Adjust as needed */
+  margin-top: 20px;
+}
+
+.spinner-icon {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #7983ff; /* Or your preferred brand color */
+  border-radius: 50%;
+  width: 20px; /* Adjust size as needed */
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin-left: 10px; /* Spacing between text and spinner */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
