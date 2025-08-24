@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 
-/* Add this to your CSS file (e.g., App.css or a dedicated loading.css) */
+
 .loading-spinner {
   display: flex;
   align-items: center;
@@ -12,7 +12,7 @@
 
 .spinner-icon {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #7983ff; /* Or your preferred brand color */
+  border-left-color: #7983ff; 
   border-radius: 50%;
   width: 20px; /* Adjust size as needed */
   height: 20px;

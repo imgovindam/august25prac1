@@ -1,118 +1,24 @@
-// import axios from "axios";
-// import { useEffect, useState } from "react";
 
-// const Card = () => {
-//   const [allData, setAllData] = useState([]);
-//   const [currentPage, setcurrentPage] = useState(1);
-//   const [search, setSearch] = useState("");
-
-//   const limit = 10; // items per page
-
-//   const fetchData = async () => {
-//     try {
-//       const res = await axios.get("https://dummyjson.com/products?limit=100");
-//       setAllData(res.data.products);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   //****filter first, then paginate
-
-//   const filteredData = allData.filter(
-//     (item) =>
-//       item.title.toLowerCase().includes(search.toLowerCase()) ||
-//       item.category.toLowerCase().includes(search.toLocaleLowerCase())
-//   );
-//   // ** pagination
-//   const start = (currentPage - 1) * limit;
-//   const paginatedData = filteredData.slice(start, start + limit);
-
-//   console.log(allData);
-
-//   return (
-//     <>
-//       <div className="flex justify-center my-4">
-//         <input
-//           type="text"
-//           placeholder="Search products..."
-//           value={search}
-//           onChange={(e) => {
-//             setSearch(e.target.value);
-//             setcurrentPage(1); // reset page on new search
-//           }}
-//           className="border p-2 rounded w-1/2"
-//         />
-//       </div>
-
-//       <div className="grid grid-cols-12 gap-4 p-5">
-//         {paginatedData.map((item, i) => (
-//           <div
-//             key={i}
-//             className="col-span-6 sm:col-span-4 lg:col-span-4 p-4 border rounded"
-//           >
-//             <img
-//               src={item.thumbnail}
-//               alt={item.title}
-//               className="w-full h-auto object-cover flex justify-center items-center bg-no-repeat"
-//             />
-//             <h2 className="text-lg font-medium text-center mt-2">
-//               {item.title}
-//             </h2>
-//             <h2 className="text-lg font-medium text-center mt-2">
-//               {item.category}
-//             </h2>
-//           </div>
-//         ))}
-//       </div>
-
-//       <div className="flex justify-center gap-4 my-6">
-//         <button
-//           disabled={currentPage === 1}
-//           onClick={() => setcurrentPage(currentPage - 1)}
-//           className="border px-4 py-2 rounded disabled:opacity-50"
-//         >
-//           Prev
-//         </button>
-//         <span className="px-4 py-2">Page {currentPage}</span>
-//         <button
-//           disabled={start + limit >= filteredData.length}
-//           onClick={() => setcurrentPage(currentPage + 1)}
-//           className="border px-4 py-2 rounded disabled:opacity-50"
-//         >
-//           Next
-//         </button>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Card;
 
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const itemPerpage = 10;
 
-const Card = () => {
+const Card = ({ search }) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-
-  //*****Debounce the search input
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const debounceTimeoutRef = useRef(null);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "https://dummyjson.com/products?limit=5000"
+        "https://dummyjson.com/products?limit=100"
       );
       setData(response.data.products);
     } catch (err) {
@@ -126,7 +32,9 @@ const Card = () => {
     fetchData();
   }, []);
 
-  //*****Update debouncedSearch after a delay
+
+
+//*****Update debouncedSearch after a delay
   useEffect(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -147,112 +55,78 @@ const Card = () => {
     };
   }, [search]); // Only re-run if search changes
 
-  console.log("direct data from the data API", data);
+
+  const handlePageChange=(pageNumber)=>{
+setCurrentPage(pageNumber)
+
+window.scrollTo({top:0 ,behavior:"smooth"})
+  }
 
   if (error)
     return <p className="text-red-500 text-center mt-4">Error: {error}</p>;
 
-  // *** for search
-  // Use debouncedSearch for filtering
+  // Search filter
   const filteredData = data.filter(
     (item) =>
       item.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      item.category.toLowerCase().includes(debouncedSearch.toLocaleLowerCase())
+      item.category.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
-  // ** Pagination logic
+  // Pagination
   const totalPages = Math.ceil(filteredData.length / itemPerpage);
   const startIndex = (currentPage - 1) * itemPerpage;
   const endIndex = currentPage * itemPerpage;
-
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
-  // ****
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    // Scroll to the top of the page smoothly
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  console.log("data from pagination", paginatedData);
-  if (loading)
-    return (
-      <div className="loading-spinner">
-        Loading...
-        <span className="spinner-icon"></span>
-      </div>
-    );
-
-  console.log("from search ", search);
   return (
     <>
-      <div className="  flex justify-center items-center m-6 ">
-        <input
-          className="p-6 border w-[60%] border-violet-900 bg-violet-50 rounded-2xl"
-          value={search} // Controlled component for input
-          type="text"
-          placeholder="Search Product..."
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
       {paginatedData.length > 0 ? (
-        <div className="grid grid-cols-12">
-          {paginatedData.map((item) => {
-            return (
-              <div
-                key={item.id}
-                className="col-span-4 flex flex-col justify-center items-center "
-              >
-                <div
-                  className="flex flex-col  border p-4 m-4 items-center justify-center flex-1 border-fuchsia-900 rounded-xl
-"
-                >
+        <div className="grid grid-cols-12 bg-[#d8e2dc]">
+          {paginatedData.map((item) => (
+            <div
+              key={item.id}
+              className="col-span-4  flex flex-col justify-center items-center cursor-pointer"
+              onClick={() => navigate(`/product/${item.id}`)}
+            >
+              <div className="flex flex-col p-4 m-4 items-center justify-center flex-1">
+                <div className="border rounded-2xl">
                   <img
-                    className="flex bg-no-repeat items-center justify-center  m-4"
+                    className="m-4 w-40 h-40 object-cover"
                     src={item.thumbnail}
-                    alt={item.title} // Added alt text for accessibility
+                    alt={item.title}
                   />
-
-                  <h2
-                    className="text-justify font-sans font-medium text-violet-800 leading-3 font subpixel-antialiased tracking-wide underline decoration-indigo-500
-
-"
-                  >
-                    {item.title}
-                    <p className="text-sm text-gray-600">
-                      {item.category}
-                    </p>{" "}
-                 
-                  </h2>
                 </div>
-                <p className="overflow-hidden text-clip text-wrap">
-                  {item.description}
-                </p>{" "}
-              
+
+                <h2 className="text-lg font-medium text-violet-800">
+                  {item.title}
+                </h2>
+                <p className="text-sm text-gray-600">{item.category}</p>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       ) : (
-        <p>No data Found with your search</p>
+        <p>No data found with your search</p>
       )}
 
       {paginatedData.length > 0 && (
-        <div className="flex justify-center items-center  ">
+        <div className="flex justify-center items-center gap-4 my-4 bg-">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 bg-violet-950 text-center cursor-pointer  text-white rounded-4xl  border flex items-center justify-center  border-violet-900"
+            className="p-2 bg-violet-900 text-white rounded disabled:opacity-50"
           >
             Previous
           </button>
-          <span className="p-4">{currentPage}</span>
+          <span>
+            Page {currentPage} / {totalPages}
+          </span>
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
-            className="p-2 bg-violet-950 text-center cursor-pointer  text-white rounded-4xl  border flex items-center justify-center  border-violet-900"
+            className="p-2 bg-violet-900 text-white rounded disabled:opacity-50"
           >
             Next
           </button>
@@ -263,3 +137,28 @@ const Card = () => {
 };
 
 export default Card;
+
+
+
+// import React from "react";
+// import { useGetProductsQuery } from "../redux/apiSlice";
+
+// const Products = () => {
+//   const { data, error, isLoading } = useGetProductsQuery();
+
+//   if (isLoading) return <p>Loading...</p>;
+//   if (error) return <p>Something went wrong</p>;
+
+//   return (
+//     <div>
+//       <h2>Products</h2>
+//       <ul>
+//         {data.products.map((p) => (
+//           <li key={p.id}>{p.title}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// };
+
+// export default Products;
