@@ -12,6 +12,9 @@ const ProductDetail = ({ containerStyle }) => {
       setProduct(res.data);
     });
   }, [id]);
+  
+
+  console.log(product)
 
   if (!product) return <p className="text-center mt-10">Loading product...</p>;
 
@@ -48,12 +51,12 @@ export default ProductDetail;
 // import { useParams } from "react-router-dom";
 // import { useGetProductByIdQuery } from "../redux/apiSlice";
 
-// const ProductDetail = () => {
-//   const { id } = useParams();
-//   const { data, error, isLoading } = useGetProductByIdQuery(id);
+// // const ProductDetail = () => {
+// //   const { id } = useParams();
+// //   const { data, error, isLoading } = useGetProductByIdQuery(id);
 
-//   if (isLoading) return <p>Loading...</p>;
-//   if (error) return <p>Error fetching product</p>;
+// //   if (isLoading) return <p>Loading...</p>;
+// //   if (error) return <p>Error fetching product</p>;
 
 //   return (
 //     <div>
@@ -133,4 +136,7 @@ export default ProductDetail;
 //   );
 // };
 
-// export default ProductDetail;
+// // export default ProductDetail;
+
+
+

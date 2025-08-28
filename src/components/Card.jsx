@@ -76,8 +76,12 @@ const Card = ({ search, containerStyle, addToCart }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (error)
-    return <p className="text-red-500 text-center mt-4">Error: {error}</p>;
+  if (error){
+
+    return <div className="text-red-500 text-center mt-4">Error: {error} <img src={noDataIcon}/> </div>;
+
+
+  }
 
   // Search filter
   const filteredData = data.filter(
