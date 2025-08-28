@@ -12,5 +12,5 @@ export const apiSlice = createApi({
     }),
   }),
 });
-console.log(fetchBaseQuery)
+console.log(fetchBaseQuery);
 export const { useGetProductsQuery, useGetProductByIdQuery } = apiSlice;

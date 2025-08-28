@@ -184,35 +184,75 @@
 // };
 // export default Navbar;
 
-
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-
-const Navbar = ({ search, setSearch, setCurrentPage,currentPage }) => {
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Drawer } from "antd";
+const Navbar = ({
+  search,
+  setSearch,
+  // setCurrentPage,
+  // currentPage,
+  darkMode,
+  handleDarkMode,
+  cartCount,
+  cartItems,
+  removeFromCart,
+}) => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
   const location = useLocation();
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  // const location = useLocation();
+  // const [darkMode, setDarkMode] = useState(false);
+
+  // const handleDarkMode = () => setDarkMode((v) => !v);
+  // const handleNavigate = () => {
+  //   if (location.pathname === "/") {
+  //     // Already on home → reset to page 1
+  //     setCurrentPage(currentPage === 1);
+  //   } else {
+  //     // Anywhere else (like /product/:id) → navigate home
+  //     navigate("/");
+  //     setSearch("");
+  //   }
+  // };
 
   const handleNavigate = () => {
-    if (location.pathname === "/") {
-      // Already on home → reset to page 1
-      setCurrentPage(currentPage===1);
-    } else {
-      // Anywhere else (like /product/:id) → navigate home
-      navigate("/");
-    }
+    navigate("/");
+    setSearch("");
   };
 
-  console.log("currentPage",currentPage)
-  console.log(setCurrentPage)
+  const handleCheckOutNavigate = () => {
+    navigate("/Checkout");
+    setOpen(false);
+  };
+
+  // const handleCart = () => {
+  //   navigate("/Cart");
+  // };
+
+  // console.log("currentPage", currentPage);
+  // console.log(setCurrentPage);
+
+  // const containerStyle = darkMode
+  //   ? { backgroundColor: " #111", color: "#fff" }
+  //   : { backgroundColor: "#f3f4f6", color: "#111" };
 
   return (
-    <div className="bg-gradient-to-r from-[#560bad] via-purple-600 to-pink-600 text-white shadow-md px-6 py-3 flex justify-between items-center"> 
+    <div className="bg-gradient-to-r from-[#560bad] via-purple-600 to-pink-600 text-white shadow-md px-6 py-3 flex justify-between items-center">
       <h1
         className="text-xl font-bold text-[#efebe0] font-sans leading-3.5 cursor-pointer"
         onClick={handleNavigate}
       >
         MyShop
       </h1>
+
       <input
         type="text"
         value={search}
@@ -220,9 +260,73 @@ const Navbar = ({ search, setSearch, setCurrentPage,currentPage }) => {
         onChange={(e) => setSearch(e.target.value)}
         className="p-2 border rounded-lg w-[40%] border-[#efebe0] bg-[#efebe0] text-black outline-0"
       />
+
+      <div>
+        <button className="cursor-pointer text-4xl" onClick={handleDarkMode}>
+          {darkMode ? "🌑" : "☀️"}
+        </button>
+      </div>
+
+      {/* <div  className="cursor-pointer" onClick={handleCart}>
+        🛒 Cart ({cartCount})
+      </div> */}
+
+      <Button type="primary" onClick={showDrawer}>
+        🛒 Cart ({cartCount})
+      </Button>
+
+      <Drawer
+        title="Basic Drawer"
+        closable={{ "aria-label": "Close Button" }}
+        onClose={onClose}
+        open={open}
+      >
+        <div>
+          <h2>Your Cart</h2>
+          {cartItems.length === 0 ? (
+            <p>No items in cart</p>
+          ) : (
+            cartItems.map((item) => (
+              <div key={item.id}>
+                <div>
+                  <p>{item.name}</p>
+                  <img src={item.thumbnail} />
+                </div>
+                <button onClick={() => removeFromCart(item.id)}>Remove</button>
+              </div>
+            ))
+          )}
+        </div>
+
+        {cartItems.length > 0 && location.pathname !== "/Checkout" && (
+          <button
+            onClick={handleCheckOutNavigate}
+            className="px-4 py-4 mx-4 my-4 bg-amber-800"
+          >
+            Checkout from here
+          </button>
+        )}
+
+        {/* {cartItems.length > 0 && (
+          <button
+            onClick={handleCheckOutNavigate}
+            className="px-4 py-4 mx-4 my-4 bg-amber-800"
+          >
+            Checkout from here
+          </button>
+        )}
+
+        {!location === "/Checkout" && (
+          <button
+            onClick={handleCheckOutNavigate}
+            className="px-4 py-4 mx-4 my-4 bg-amber-800"
+          >
+            Checkout from here
+          </button>
+        )} */}
+      </Drawer>
     </div>
   );
 };
 
 export default Navbar;
-
