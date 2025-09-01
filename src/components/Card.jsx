@@ -1,42 +1,305 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import noDataIcon from "../assets/no-data.png";
+// import noDataIcon from "../assets/no-data.png";
+import { PlusIcon } from "@heroicons/react/24/solid";
 
-const itemPerpage = 10;
+// const itemPerpage = 10;
 
-const Card = ({ search, containerStyle, addToCart }) => {
+// const Card = ({ search, containerStyle, addToCart, removeFromCart }) => {
+//   const [data, setData] = useState([]);
+//   const [error, setError] = useState(null);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [loading, setLoading] = useState(true);
+//   const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+//   const [cartCounts, setCartCounts] = useState({});
+
+//   // ✅ Increment/Decrement by id
+//   // const handleCartCountInc = (item) => {
+//   //   setCartCounts((prev) => ({
+//   //     ...prev,
+//   //     [item.id]: (prev[item.id] || 0) + 1,
+//   //   }));
+//   //   addToCart(item);
+//   // };
+
+//   const handleCartCountInc = (item) => {
+//     setCartCounts((prev) => {
+//       let newCartCount = { ...prev };
+
+//       if (!newCartCount[item.id]) {
+//         newCartCount[item.id] = 1;
+//       } else {
+//         newCartCount[item.id] += 1;
+//       }
+
+//       return newCartCount;
+//     });
+//     addToCart(item);
+//   };
+
+//   const handleCartCountDec = (item) => {
+//     console.log("this item is removing", item);
+//     console.log(item.id);
+//     setCartCounts((prev) => {
+//       if (!prev[item.id]) return prev;
+//       return { ...prev, [item.id]: prev[item.id] - 1 };
+//     });
+//     removeFromCart(item.id);
+//     // addToCart(item);
+//     // removeFromCart(item);
+//   };
+
+//   // const handleCartCountInc = () => {
+//   //   setCartCount(cartCount + 1);
+//   // };
+//   // const handleCartCountDec = (removeIndex) => {
+//   //   // if (cartCount !== 0) setCartCount((c) => c - 1);
+
+//   //   {
+//   //     cartCount !== 0 && setCartCount(cartCount - 1);
+//   //   }
+//   //   setData((data) => data.filter((item, idx) => idx !== removeIndex));
+
+//   //   // setData(addToCart);
+//   // };
+
+//   const debounceTimeoutRef = useRef(null);
+
+//   const navigate = useNavigate();
+
+//   const fetchData = async () => {
+//     try {
+//       const response = await axios.get(
+//         "https://dummyjson.com/products?limit=100"
+//       );
+//       setData(response.data.products);
+//     } catch (err) {
+//       setError(err.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchData();
+//   }, []);
+
+//   //*****Update debouncedSearch after a delay
+//   useEffect(() => {
+//     if (debounceTimeoutRef.current) {
+//       clearTimeout(debounceTimeoutRef.current);
+//     }
+//     debounceTimeoutRef.current = setTimeout(() => {
+//       setDebouncedSearch(search);
+//       setCurrentPage(1);
+
+//       // Reset to first page on new search
+//     }, 600);
+
+//     // 300ms debounce delay
+
+//     return () => {
+//       if (debounceTimeoutRef.current) {
+//         clearTimeout(debounceTimeoutRef.current);
+//       }
+//     };
+//   }, [search]); // Only re-run if search changes
+
+//   const handlePageChange = (pageNumber) => {
+//     setCurrentPage(pageNumber);
+
+//     window.scrollTo({ top: 0, behavior: "smooth" });
+//   };
+
+//   if (error) {
+//     return (
+//       <div className="text-red-500 text-center mt-4 flex flex-col justify-center items-center">
+//         Error: {error} <img src={noDataIcon} />{" "}
+//       </div>
+//     );
+//   }
+
+//   // Search filter
+//   const filteredData = data.filter(
+//     (item) =>
+//       item.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+//       item.category.toLowerCase().includes(debouncedSearch.toLowerCase())
+//   );
+
+//   // Pagination
+//   const totalPages = Math.ceil(filteredData.length / itemPerpage);
+//   const startIndex = (currentPage - 1) * itemPerpage;
+//   const endIndex = currentPage * itemPerpage;
+//   const paginatedData = filteredData.slice(startIndex, endIndex);
+
+//   if (loading) return <p className="text-center mt-10">Loading...</p>;
+
+//   // ** For cart
+
+//   // const handleCart = (item) => {
+//   //   setcartItem((prev) => [...prev, item]);
+//   // };
+
+//   return (
+//     <>
+//       {/* <div className="flex justify-center bg-no-repeat bg-contain items-center h-[300px]  bg-amber-300">
+
+//       <img src="https://cdn.pixabay.com/photo/2022/08/09/13/12/gas-station-7374964_1280.jpg" />
+//     </div> */}
+
+//       <div className="">
+//         {paginatedData.length > 0 ? (
+//           <div className="grid grid-cols-12 " style={containerStyle}>
+//             {paginatedData.map((item) => (
+//               <div
+//                 key={item.id}
+//                 className="col-span-4 bg-[#eeeeee] flex flex-col justify-center items-center cursor-pointer  rounded-2xl gap-32 mx-4  py-20 my-8 transition transform duration-300 hover:scale-105  shadow-md outline-none"
+//                 onClick={() => navigate(`/product/${item.id}`)}
+//               >
+//                 <div className="flex flex-col p-4 m-4 items-center justify-center flex-1">
+//                   <div className="">
+//                     <img
+//                       className="m-4 w-40 h-40 object-cover"
+//                       src={item.thumbnail}
+//                       alt={item.title}
+//                     />
+//                   </div>
+
+//                   <h2
+//                     className="text-lg font-medium text-violet-800
+//      truncate font-sans leading-3.5 flex
+// "
+//                   >
+//                     {item.title}
+//                   </h2>
+//                   <p className="text-sm text-gray-600 leading-7.5  font-sans capitalize">
+//                     {item.category}
+//                   </p>
+//                   {/* <button onClick={() => addToCart(item)}>Add to Cart</button> */}
+//                   <div className="flex gap-2 items-center mt-4 ">
+//                     <button
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         handleCartCountDec(item);
+//                       }}
+//                       className="px-4 py-2 bg-violet-600 text-white rounded text-center cursor-pointer"
+//                     >
+//                       <svg
+//                         xmlns="http://www.w3.org/2000/svg"
+//                         fill="none"
+//                         viewBox="0 0 24 24"
+//                         stroke-width="1.5"
+//                         stroke="currentColor"
+//                         class="size-6"
+//                       >
+//                         <path
+//                           stroke-linecap="round"
+//                           stroke-linejoin="round"
+//                           d="M5 12h14"
+//                         />
+//                       </svg>
+//                     </button>
+
+//                     <span className="px-3">{cartCounts[item.id] || 0}</span>
+
+//                     <button
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         handleCartCountInc(item);
+//                       }}
+//                       className="px-4 py-2 bg-violet-600 text-white rounded text-center cursor-pointer"
+//                     >
+//                       <PlusIcon className="h-6 w-6" />
+//                     </button>
+//                   </div>
+
+//                   {/* <button
+//                   onClick={(e) => {
+//                     e.stopPropagation(); // stop navigating to product detail
+//                     addToCart(item);
+//                   }}
+//                   className="mt-2 px-4 py-2 bg-green-600 text-white rounded"
+//                 >
+//                   <span onClick={handleCartCountInc}> ➕ {cartCount}</span>{" "}
+//                 </button>
+
+//                 <button
+//                   onClick={(e) => {
+//                     e.stopPropagation(); // stop navigating to product detail
+//                     addToCart(item);
+//                   }}
+//                   className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+//                 >
+//                   <span onClick={handleCartCountDec}> ➖ </span>
+//                 </button> */}
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         ) : (
+//           <div className="flex justify-center items-center h-auto">
+//             <img src={noDataIcon} />
+//           </div>
+//           // <p>No data found with your search</p>
+//         )}
+
+//         {paginatedData.length > 0 && (
+//           <div className="flex justify-center items-center gap-4 my-4   rounded text-center ">
+//             <button
+//               onClick={() => handlePageChange(currentPage - 1)}
+//               disabled={currentPage === 1}
+//               className="p-2 bg-violet-900 text-white rounded disabled:opacity-50 cursor-pointer"
+//             >
+//               Previous
+//             </button>
+
+//             {Array.from({ length: totalPages }, (_, i) => (
+//               <button
+//                 key={i + 1}
+//                 onClick={() => handlePageChange(i + 1)}
+//                 className={`px-3 py-1 rounded cursor-pointer ${
+//                   currentPage === i + 1
+//                     ? "bg-violet-600 text-white"
+//                     : "bg-gray-200"
+//                 }`}
+//               >
+//                 {i + 1}
+//               </button>
+//             ))}
+
+//             <span>
+//               Page {currentPage} / {totalPages}
+//             </span>
+//             <button
+//               onClick={() => handlePageChange(currentPage + 1)}
+//               disabled={currentPage >= totalPages}
+//               className="p-2 bg-violet-900 text-white rounded disabled:opacity-50 cursor-pointer"
+//             >
+//               Next
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </>
+//   );
+// };
+
+
+
+const Card = ({ search, containerStyle, addToCart, removeFromCart, cartCounts }) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [debouncedSearch, setDebouncedSearch] = useState(search);
-
-  const [cartCount, setCartCount] = useState(0);
-
-  const handleCartCountInc = () => {
-    setCartCount(cartCount + 1);
-  };
-  const handleCartCountDec = (removeIndex) => {
-    // if (cartCount !== 0) setCartCount((c) => c - 1);
-
-    {
-      cartCount !== 0 && setCartCount(cartCount - 1);
-    }
-    setData((data) => data.filter((item, idx) => idx !== removeIndex));
-
-    // setData(addToCart);
-  };
-
   const debounceTimeoutRef = useRef(null);
-
   const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "https://dummyjson.com/products?limit=100"
-      );
+      const response = await axios.get("https://dummyjson.com/products?limit=100");
       setData(response.data.products);
     } catch (err) {
       setError(err.message);
@@ -49,7 +312,6 @@ const Card = ({ search, containerStyle, addToCart }) => {
     fetchData();
   }, []);
 
-  //*****Update debouncedSearch after a delay
   useEffect(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
@@ -57,138 +319,148 @@ const Card = ({ search, containerStyle, addToCart }) => {
     debounceTimeoutRef.current = setTimeout(() => {
       setDebouncedSearch(search);
       setCurrentPage(1);
-
-      // Reset to first page on new search
     }, 600);
-
-    // 300ms debounce delay
-
     return () => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
       }
     };
-  }, [search]); // Only re-run if search changes
+  }, [search]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (error){
-
-    return <div className="text-red-500 text-center mt-4">Error: {error} <img src={noDataIcon}/> </div>;
-
-
+  if (error) {
+    return (
+      <div className="text-red-500 text-center mt-4 flex flex-col justify-center items-center">
+        Error: {error}
+        <img src="https://placehold.co/400x300/e9d5ff/7c3aed?text=No+Data" alt="No data found" />
+      </div>
+    );
   }
 
-  // Search filter
+  const itemPerpage = 10;
   const filteredData = data.filter(
     (item) =>
       item.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
       item.category.toLowerCase().includes(debouncedSearch.toLowerCase())
   );
 
-  // Pagination
   const totalPages = Math.ceil(filteredData.length / itemPerpage);
   const startIndex = (currentPage - 1) * itemPerpage;
-  const endIndex = currentPage * itemPerpage;
-  const paginatedData = filteredData.slice(startIndex, endIndex);
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemPerpage);
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 
-  // ** For cart
-
-  // const handleCart = (item) => {
-  //   setcartItem((prev) => [...prev, item]);
-  // };
-
   return (
     <>
-      {paginatedData.length > 0 ? (
-        <div className="grid grid-cols-12 " style={containerStyle}>
-          {paginatedData.map((item) => (
-            <div
-              key={item.id}
-              className="col-span-4 bg-[#dee107] flex flex-col justify-center items-center cursor-pointer  rounded-2xl gap-32 mx-4  py-20 my-8 transition transform duration-300 hover:scale-105  shadow-md outline-none"
-              onClick={() => navigate(`/product/${item.id}`)}
-            >
-              <div className="flex flex-col p-4 m-4 items-center justify-center flex-1">
-                <div className="">
-                  <img
-                    className="m-4 w-40 h-40 object-cover"
-                    src={item.thumbnail}
-                    alt={item.title}
-                  />
+      <div className="">
+        {paginatedData.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4 md:p-8" style={containerStyle}>
+            {paginatedData.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white flex flex-col justify-between items-center cursor-pointer rounded-2xl p-8 my-4 transition transform duration-300 hover:scale-105 shadow-xl border border-gray-200"
+                onClick={() => navigate(`/product/${item.id}`)}
+              >
+                <div className="flex flex-col items-center justify-center flex-1 w-full">
+                  <div className="mb-4">
+                    <img
+                      className="w-48 h-48 object-cover rounded-lg shadow-inner"
+                      src={item.thumbnail}
+                      alt={item.title}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://placehold.co/192x192/7c3aed/ffffff?text=Image+Not+Found";
+                      }}
+                    />
+                  </div>
+                  <h2 className="text-xl font-semibold text-violet-800 text-center truncate w-full px-2 mt-4">
+                    {item.title}
+                  </h2>
+                  <p className="text-sm text-gray-500 capitalize text-center mt-1">{item.category}</p>
+                  <p className="text-2xl font-bold text-gray-900 mt-2">${item.price.toFixed(2)}</p>
                 </div>
-
-                <h2
-                  className="text-lg font-medium text-violet-800
-     truncate font-sans leading-3.5 flex
-"
-                >
-                  {item.title}
-                </h2>
-                <p className="text-sm text-gray-600 leading-7.5  font-sans capitalize">
-                  {item.category}
-                </p>
-                {/* <button onClick={() => addToCart(item)}>Add to Cart</button> */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // stop navigating to product detail
-                    addToCart(item);
-                  }}
-                  className="mt-2 px-4 py-2 bg-green-600 text-white rounded"
-                >
-                  <span onClick={handleCartCountInc}> ➕ {cartCount}</span>{" "}
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // stop navigating to product detail
-                    addToCart(item);
-                  }}
-                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
-                >
-                  <span onClick={handleCartCountDec}> ➖ </span>
-                </button>
+                <div className="flex gap-4 items-center mt-6">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFromCart(item);
+                    }}
+                    className="px-4 py-2 bg-red-500 text-white rounded-full text-center cursor-pointer shadow-md hover:bg-red-600 transition duration-300 transform hover:scale-110"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                      className="size-6"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
+                    </svg>
+                  </button>
+                  <span className="text-xl font-bold text-gray-800">{cartCounts[item.id] || 0}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(item);
+                    }}
+                    className="px-4 py-2 bg-green-500 text-white rounded-full text-center cursor-pointer shadow-md hover:bg-green-600 transition duration-300 transform hover:scale-110"
+                  >
+                    <PlusIcon className="h-6 w-6" />
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-auto">
+            <img src="https://placehold.co/400x300/e9d5ff/7c3aed?text=No+Data" alt="No data found" />
+          </div>
+        )}
+        {paginatedData.length > 0 && (
+          <div className="flex flex-wrap justify-center items-center gap-4 my-8 p-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-3 bg-violet-800 text-white rounded-lg shadow-md disabled:opacity-50 cursor-pointer hover:bg-violet-900 transition duration-300"
+            >
+              Previous
+            </button>
+            <div className="flex gap-2">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`px-4 py-2 rounded-lg font-semibold cursor-pointer transition duration-300 ${
+                    currentPage === i + 1
+                      ? "bg-violet-600 text-white shadow-lg"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex justify-center items-center h-auto">
-          <img src={noDataIcon} />
-        </div>
-        // <p>No data found with your search</p>
-      )}
-
-      {paginatedData.length > 0 && (
-        <div className="flex justify-center items-center gap-4 my-4 bg-">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="p-2 bg-violet-900 text-white rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span>
-            Page {currentPage} / {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage >= totalPages}
-            className="p-2 bg-violet-900 text-white rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
+            <span className="text-lg font-medium text-gray-700">
+              Page {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage >= totalPages}
+              className="p-3 bg-violet-800 text-white rounded-lg shadow-md disabled:opacity-50 cursor-pointer hover:bg-violet-900 transition duration-300"
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
     </>
   );
 };
-
 export default Card;
 
 // import React from "react";
